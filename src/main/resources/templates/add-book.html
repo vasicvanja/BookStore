@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Add new book</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+
+</head>
+<body class="d-flex flex-column">
+<nav class="navbar navbar-expand-md navbar-dark" style="background-color: #212121;">
+    <div class="container">
+        <a class="navbar-brand" href="/home">BOOK SHOP</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
+                aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-end" id="navbarsExampleDefault">
+            <ul class="navbar-nav m-auto">
+                <li class="nav-item m-auto">
+                    <a class="nav-link active" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/books">Books</a>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <a class="nav-link" href="/logout">Logout</a>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()" style="margin-left: 10px; margin-right: -10px">
+                    <a class="nav-link">Hello</a>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <a class="nav-link" sec:authentication="name"></a>
+                </li>
+                <li class="nav-item" sec:authorize="!isAuthenticated()">
+                    <a class="nav-link" href="/login">Login</a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('ROLE_MODERATOR')">
+                    <a class="nav-link" href="/admin">Admin panel</a>
+                </li>
+            </ul>
+            <a class="btn btn-primary" href="payments/charge" sec:authorize="isAuthenticated()">
+                <i class="fa fa-shopping-cart"></i> Cart
+            </a>
+            <a class="btn btn-primary" href="/wish-list" sec:authorize="isAuthenticated()" style="margin-left: 5px">
+                <i class="fa fa-shopping-cart"></i> Wish list
+            </a>
+
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-5">
+            <form action="/books/save"
+                  method="post"
+                  enctype="multipart/form-data"
+                  th:object="${book}">
+                <input type="text" hidden="hidden" name="id" th:value="${book.getId()}">
+                <div class="form-group">
+                    <label for="name">Book name</label>
+                    <input type="text"
+                           class="form-control"
+                           th:value="${book.getName()}"
+                           id="name"
+                           name="name"
+                           th:field="*{name}"
+                           required
+                           placeholder="Enter book name">
+                </div>
+                <div class="form-group">
+                    <label for="quantity">Quantity</label>
+                    <input type="text"
+                           class="form-control"
+                           th:value="${book.getQuantity()}"
+                           id="quantity"
+                           th:field="*{quantity}"
+                           name="quantity"
+                           placeholder="Quantity">
+                </div>
+                <div class="form-group">
+                    <h4 class="text-danger"
+                        th:if="${#fields.hasErrors('price')}"
+                        th:errors="*{price}">
+
+                    </h4>
+                    <label for="price">Price</label>
+                    <input type="text"
+                           class="form-control"
+                           th:value="${book.getPrice()}"
+                           id="price"
+                           th:field="*{price}"
+                           name="price"
+                           placeholder="Price">
+                </div>
+
+
+                <div class="form-group">
+                    <label>Category</label>
+                    <select th:field="*{category.id}" class="form-control">
+                        <option
+                                th:selected="${book.getCategory() != null && book.getCategory().getId() == cat.getId()}"
+                                th:each="cat : ${categories}"
+                                th:value="${cat.getId()}"
+                                th:text="${cat.getName()}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="authors">Authors</label>
+                    <select multiple class="form-control" id="authors" name="authors">
+                        <option th:each="author : ${authors}"
+                                th:field="*{authors}"
+                                th:text="${author.getName()}"
+                                th:value="${author.id}"></option>
+                    </select>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="image">Image</label>
+                    <input name="image" id="image" class="form-control" type="file"/>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <button class="btn btn-primary" onclick="location.href='/books'" type="button" style="width: 80px">
+                    Back</button>
+            </form>
+        </div>
+    </div>
+</div>
+<div id="page-content">
+</div>
+<footer id="sticky-footer" class="py-4 bg-dark text-white-50">
+    <div class="container text-center">
+        <small>Copyright &copy;</small>
+    </div>
+</footer>
+</body>
+</html>
+
+
+
